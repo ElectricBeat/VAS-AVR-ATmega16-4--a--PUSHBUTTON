@@ -1,0 +1,130 @@
+
+PUSHBUTTON.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000098  00000000  00000000  00000054  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800060  00800060  000000ec  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .comment      00000030  00000000  00000000  000000ec  2**0
+                  CONTENTS, READONLY
+  3 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  0000011c  2**2
+                  CONTENTS, READONLY
+  4 .debug_aranges 00000020  00000000  00000000  00000158  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  5 .debug_info   000000ae  00000000  00000000  00000178  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_abbrev 00000062  00000000  00000000  00000226  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_line   000000ef  00000000  00000000  00000288  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_frame  00000024  00000000  00000000  00000378  2**2
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_str    0000015f  00000000  00000000  0000039c  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_ranges 00000010  00000000  00000000  000004fb  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0c 94 2a 00 	jmp	0x54	; 0x54 <__ctors_end>
+   4:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   8:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+   c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  10:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  14:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  18:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  1c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  20:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  24:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  28:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  2c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  30:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  34:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  38:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  3c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  40:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  44:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  48:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  4c:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+  50:	0c 94 34 00 	jmp	0x68	; 0x68 <__bad_interrupt>
+
+00000054 <__ctors_end>:
+  54:	11 24       	eor	r1, r1
+  56:	1f be       	out	0x3f, r1	; 63
+  58:	cf e5       	ldi	r28, 0x5F	; 95
+  5a:	d4 e0       	ldi	r29, 0x04	; 4
+  5c:	de bf       	out	0x3e, r29	; 62
+  5e:	cd bf       	out	0x3d, r28	; 61
+  60:	0e 94 36 00 	call	0x6c	; 0x6c <main>
+  64:	0c 94 4a 00 	jmp	0x94	; 0x94 <_exit>
+
+00000068 <__bad_interrupt>:
+  68:	0c 94 00 00 	jmp	0	; 0x0 <__vectors>
+
+0000006c <main>:
+#include <avr/io.h>
+#include <util/delay.h>
+
+int main(void)
+{
+	DDRB	=	DDRB | (1<<6);
+  6c:	be 9a       	sbi	0x17, 6	; 23
+	DDRB	=	DDRB | (1<<7);
+  6e:	bf 9a       	sbi	0x17, 7	; 23
+
+	DDRB	=	DDRB & (~(1<<0));
+  70:	b8 98       	cbi	0x17, 0	; 23
+	DDRB	=	DDRB & (~(1<<1));
+  72:	b9 98       	cbi	0x17, 1	; 23
+
+	PORTB	=	PORTB | (1<<0);
+  74:	c0 9a       	sbi	0x18, 0	; 24
+	PORTB	=	PORTB | (1<<1);
+  76:	c1 9a       	sbi	0x18, 1	; 24
+	int pin_status1;
+	int pin_status2;
+
+    while (1) 
+    {
+		pin_status1	=	PINB & (1<<0);
+  78:	96 b3       	in	r25, 0x16	; 22
+		pin_status2	=	PINB & (1<<1);
+  7a:	86 b3       	in	r24, 0x16	; 22
+  7c:	82 70       	andi	r24, 0x02	; 2
+
+		if (pin_status1)
+  7e:	90 ff       	sbrs	r25, 0
+  80:	02 c0       	rjmp	.+4      	; 0x86 <main+0x1a>
+		{
+			PORTB	=	PORTB | (1<<6);
+  82:	c6 9a       	sbi	0x18, 6	; 24
+  84:	01 c0       	rjmp	.+2      	; 0x88 <main+0x1c>
+		}
+		else
+		{
+			PORTB	=	PORTB & (~(1<<6));
+  86:	c6 98       	cbi	0x18, 6	; 24
+		}
+
+		if (pin_status2)
+  88:	88 23       	and	r24, r24
+  8a:	11 f0       	breq	.+4      	; 0x90 <main+0x24>
+		{
+			PORTB	=	PORTB | (1<<7);
+  8c:	c7 9a       	sbi	0x18, 7	; 24
+  8e:	f4 cf       	rjmp	.-24     	; 0x78 <main+0xc>
+		}
+		else
+		{
+			PORTB	=	PORTB & (~(1<<7));
+  90:	c7 98       	cbi	0x18, 7	; 24
+  92:	f2 cf       	rjmp	.-28     	; 0x78 <main+0xc>
+
+00000094 <_exit>:
+  94:	f8 94       	cli
+
+00000096 <__stop_program>:
+  96:	ff cf       	rjmp	.-2      	; 0x96 <__stop_program>
